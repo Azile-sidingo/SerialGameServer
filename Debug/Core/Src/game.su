@@ -1,0 +1,3 @@
+../Core/Src/game.c:8:6:Game_Init	8	static
+../Core/Src/game.c:15:12:Game_ApplyMove	16	static
+../Core/Src/game.c:41:12:Game_CheckStatus	128	static
