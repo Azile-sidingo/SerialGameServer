@@ -1,1 +1,5 @@
-../Core/Src/protocol.c:10:6:Protocol_ParseCommand	29
+../Core/Src/protocol.c:24:13:write_board_response	4
+../Core/Src/protocol.c:53:13:play_ai_if_needed	6
+../Core/Src/protocol.c:69:13:begin_new_game	1
+../Core/Src/protocol.c:84:12:set_next_mode	8
+../Core/Src/protocol.c:119:6:Protocol_ParseCommand	28

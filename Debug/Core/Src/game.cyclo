@@ -1,3 +1,11 @@
-../Core/Src/game.c:8:6:Game_Init	1
-../Core/Src/game.c:15:12:Game_ApplyMove	5
-../Core/Src/game.c:41:12:Game_CheckStatus	9
+../Core/Src/game.c:16:6:Game_Init	1
+../Core/Src/game.c:23:12:Game_ApplyMove	5
+../Core/Src/game.c:45:12:Game_CheckStatus	9
+../Core/Src/game.c:75:17:next_random	1
+../Core/Src/game.c:83:13:board_winner	5
+../Core/Src/game.c:97:12:random_empty_square	4
+../Core/Src/game.c:108:12:find_immediate_win	4
+../Core/Src/game.c:122:12:medium_move	8
+../Core/Src/game.c:144:12:minimax	16
+../Core/Src/game.c:184:12:hard_move	5
+../Core/Src/game.c:206:5:Game_SelectAIMove	8
