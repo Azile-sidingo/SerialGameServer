@@ -6,7 +6,9 @@ class TicTacToeGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Tic-Tac-Toe Serial Client")
-        self.root.geometry("350x450")
+        self.root.geometry("400x450") # Widened to fit the third button
+       
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
        
         self.serial_conn = None
        
@@ -19,6 +21,9 @@ class TicTacToeGUI:
        
         self.start_btn = tk.Button(self.top_frame, text="Start Game", command=self.start_game, width=10, state=tk.DISABLED)
         self.start_btn.grid(row=0, column=1, padx=5)
+
+        self.resign_btn = tk.Button(self.top_frame, text="Resign", command=self.resign_game, width=10, state=tk.DISABLED)
+        self.resign_btn.grid(row=0, column=2, padx=5)
        
         self.status_label = tk.Label(root, text="Status: Disconnected", fg="red")
         self.status_label.pack(pady=5)
@@ -37,7 +42,6 @@ class TicTacToeGUI:
             self.buttons.append(btn)
 
     def send_command(self, cmd):
-        """Helper to send a command and read the \r\n terminated response."""
         if not self.serial_conn or not self.serial_conn.is_open:
             return None
         try:
@@ -70,6 +74,7 @@ class TicTacToeGUI:
             self.status_label.config(text="Status: IN PROGRESS", fg="green")
             self.parse_and_update_board(response)
             self.enable_grid()
+            self.resign_btn.config(state=tk.NORMAL) # Enable Resign when game starts
         else:
             messagebox.showerror("Error", f"Failed to start game. Response: {response}")
 
@@ -81,14 +86,19 @@ class TicTacToeGUI:
         if response.startswith("OK: BOARD:"):
             self.parse_and_update_board(response)
         elif response.startswith("NACK:"):
-            # The STM32 rejected the move (e.g., OCCUPIED, RANGE)
             messagebox.showwarning("Invalid Move", response)
 
+    def resign_game(self):
+        """Sends the RESIGN command and parses the STM32's WIN response."""
+        response = self.send_command("RESIGN")
+        if response and response.startswith("OK: BOARD:"):
+            self.parse_and_update_board(response)
+        elif response and response.startswith("NACK:"):
+            messagebox.showwarning("Invalid Command", response)
+
     def parse_and_update_board(self, response):
-        """Parses strings like 'OK: BOARD:X..O..... WIN:X' and updates UI."""
         parts = response.split(" ")
        
-        # Extract board string and update buttons
         for part in parts:
             if part.startswith("BOARD:"):
                 board_str = part.split(":")[1]
@@ -96,7 +106,6 @@ class TicTacToeGUI:
                     char = board_str[i]
                     self.buttons[i].config(text="" if char == '.' else char)
        
-        # Detect Game Over conditions appended by the STM32
         for part in parts:
             if part.startswith("WIN:"):
                 winner = part.split(":")[1]
@@ -115,6 +124,23 @@ class TicTacToeGUI:
     def disable_grid(self):
         for btn in self.buttons:
             btn.config(state=tk.DISABLED)
+        self.resign_btn.config(state=tk.DISABLED) # Disable Resign when game ends
+
+    def on_closing(self):
+        if self.serial_conn and self.serial_conn.is_open:
+            try:
+                state_response = self.send_command("STATE")
+                if state_response:
+                    if "IN_PROGRESS" in state_response:
+                        self.send_command("RESIGN")
+                        self.send_command("DISCONNECT")
+                    elif "GAME_OVER" in state_response:
+                        self.send_command("DISCONNECT")
+            except Exception:
+                pass
+            finally:
+                self.serial_conn.close()
+        self.root.destroy()
 
 if __name__ == "__main__":
     root = tk.Tk()
