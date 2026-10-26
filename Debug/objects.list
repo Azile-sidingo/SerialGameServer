@@ -1,4 +1,6 @@
 "./Core/Src/game.o"
+"./Core/Src/lcd_status.o"
+"./Core/Src/lcd_stm32f0.o"
 "./Core/Src/main.o"
 "./Core/Src/protocol.o"
 "./Core/Src/stm32f0xx_hal_msp.o"

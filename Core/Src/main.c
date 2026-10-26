@@ -13,6 +13,7 @@
 /* USER CODE BEGIN Includes */
 #include <string.h>
 #include "protocol.h"
+#include "lcd_status.h"  /* Read-only STM32 LCD server state */
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -42,6 +43,8 @@ int main(void)
   MX_USART1_UART_Init();
 
   /* USER CODE BEGIN 2 */
+  LCD_Status_Init();
+  LCD_Status_Update(current_state);
   HAL_UART_Receive_IT(&huart1, &rx_byte, 1);
   /* USER CODE END 2 */
 
@@ -78,6 +81,9 @@ int main(void)
 		memset(rx_buffer, 0, sizeof(rx_buffer));
 		rx_overflow = 0;
 		frame_ready = 0;
+
+		/* Display state transitions, preserving UART and game logic. */
+		LCD_Status_Update(current_state);
 	}
   }
   /* USER CODE END 3 */
