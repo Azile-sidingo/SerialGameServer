@@ -1,0 +1,3 @@
+../Core/Src/lcd_status.c:14:13:LCD_Status_WriteLine	4
+../Core/Src/lcd_status.c:32:6:LCD_Status_Init	1
+../Core/Src/lcd_status.c:38:6:LCD_Status_Update	6
